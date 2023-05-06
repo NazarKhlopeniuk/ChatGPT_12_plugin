@@ -1,30 +1,12 @@
 import json
-
 import quart
 import quart_cors
 from quart import request
 import requests
-from flask import jsonify
+
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
-# Keep track of todo's. Does not persist if Python session is restarted.
-_TODOS = {}
-
-@app.post("/todos/<string:username>")
-async def add_todo(username):
-    request = await quart.request.get_json(force=True)
-    if username not in _TODOS:
-        _TODOS[username] = []
-    _TODOS[username].append(request["todo"])
-    return quart.Response(response='OK', status=200)
-
-@app.get("/weather/<string:city>")
-async def get_weather(city):
-    api_key = '55afa87f357f1a647f51e3aa5e47e54a'
-    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
-    response = requests.get(url)
-    data = response.json()
-    return quart.Response(response=json.dumps(data), status=200)
+api_key = '93245454f54c4bb89c7f4685821ba920'
 
 @app.get("/profile/<string:symbol>")
 async def get_profile(symbol):
@@ -32,7 +14,6 @@ async def get_profile(symbol):
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
 
-    api_key = '93245454f54c4bb89c7f4685821ba920'
     url = f'https://api.twelvedata.com/profile?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -42,7 +23,6 @@ async def get_profile(symbol):
     if country:
         url += f'&country={country}'
 
-        
     response = requests.get(url)
     data = response.json()
     return quart.Response(response=json.dumps(data), status=200)
@@ -55,8 +35,7 @@ async def get_dividends(symbol):
     range = request.args.get('range', 'last')
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
-    
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+     
     url = f'https://api.twelvedata.com/dividends?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -84,8 +63,8 @@ async def get_splits(symbol):
     country = request.args.get('country')
     range = request.args.get('range')
     start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    end_date = request.args.get('end_date') 
+    
     url = f'https://api.twelvedata.com/splits?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -116,8 +95,8 @@ async def get_earnings(symbol):
     format = request.args.get('format', 'JSON')
     delimiter = request.args.get('delimiter')
     start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    end_date = request.args.get('end_date') 
+    
     url = f'https://api.twelvedata.com/earnings?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -155,8 +134,7 @@ async def get_earnings_calendar():
     delimiter = request.args.get('delimiter')
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
-
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+ 
     url = f'https://api.twelvedata.com/earnings_calendar?&apikey={api_key}&source=docs'
 
     if exchange:
@@ -175,14 +153,12 @@ async def get_earnings_calendar():
         url += f'&start_date={start_date}'
     if end_date:
         url += f'&end_date={end_date}'
-
         
     response = requests.get(url)
     data = response.json()
     if 'earnings' in data:
         data = data['earnings']
         
-
     return quart.Response(response=json.dumps(data), status=200)
 
 
@@ -191,13 +167,9 @@ async def get_ipo_calendar():
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
-    # outputsize = request.args.get('outputsize', 10)
-    # format = request.args.get('format', 'JSON')
-    # delimiter = request.args.get('delimiter')
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
-
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+ 
     url = f'https://api.twelvedata.com/ipo_calendar?&apikey={api_key}&source=docs'
 
     if exchange:
@@ -206,12 +178,6 @@ async def get_ipo_calendar():
         url += f'&mic_code={mic_code}'
     if country:
         url += f'&country={country}'
-    # if outputsize:
-    #     url += f'&outputsize={outputsize}'
-    # if format:
-    #     url += f'&format={format}'
-    # if delimiter:
-    #     url += f'&delimiter={delimiter}'
     if start_date:
         url += f'&start_date={start_date}'
     if end_date:
@@ -227,8 +193,8 @@ async def get_ipo_calendar():
 async def get_statistics(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
-    country = request.args.get('country')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    country = request.args.get('country') 
+    
     url = f'https://api.twelvedata.com/statistics?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -247,8 +213,8 @@ async def get_statistics(symbol):
 async def get_transactions(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
-    country = request.args.get('country')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    country = request.args.get('country') 
+    
     url = f'https://api.twelvedata.com/insider_transactions?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -271,8 +237,8 @@ async def get_income(symbol):
     country = request.args.get('country')
     period = request.args.get('period')
     start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    end_date = request.args.get('end_date') 
+    
     url = f'https://api.twelvedata.com/income_statement?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -300,8 +266,8 @@ async def get_balance(symbol):
     country = request.args.get('country')
     period = request.args.get('period')
     start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    end_date = request.args.get('end_date') 
+
     url = f'https://api.twelvedata.com/balance_sheet?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -328,8 +294,8 @@ async def get_cash(symbol):
     country = request.args.get('country')
     period = request.args.get('period')
     start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+    end_date = request.args.get('end_date') 
+    
     url = f'https://api.twelvedata.com/cash_flow?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -354,8 +320,7 @@ async def get_options_expiration(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
-    
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+     
     url = f'https://api.twelvedata.com/options/expiration?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -377,8 +342,7 @@ async def get_options_chain(symbol):
     expiration_date = request.args.get('expiration_date')
     option_id = request.args.get('option_id')
     side = request.args.get('side')
-
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+ 
     url = f'https://api.twelvedata.com/options/chain?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -404,8 +368,7 @@ async def get_key_executives(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
-    
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+     
     url = f'https://api.twelvedata.com/key_executives?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -425,8 +388,7 @@ async def get_institutional_holders(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
-    
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+     
     url = f'https://api.twelvedata.com/institutional_holders?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -445,8 +407,7 @@ async def get_fund_holders(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
-    
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+     
     url = f'https://api.twelvedata.com/fund_holders?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -465,8 +426,7 @@ async def get_direct_holders(symbol):
     exchange = request.args.get('exchange')
     mic_code = request.args.get('mic_code')
     country = request.args.get('country')
-    
-    api_key = '93245454f54c4bb89c7f4685821ba920'
+     
     url = f'https://api.twelvedata.com/direct_holders?symbol={symbol}&apikey={api_key}&source=docs'
 
     if exchange:
@@ -479,8 +439,6 @@ async def get_direct_holders(symbol):
     response = requests.get(url)
     data = response.json()
     return quart.Response(response=json.dumps(data), status=200)
-
-
 
 @app.get("/logo.png")
 async def plugin_logo():
