@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "12Data Plugin(no auth)",
+  "name_for_model": "twelvedata",
+  "description_for_human": "Plugin for getting real time data from twelve data.",
+  "description_for_model": "Plugin for getting real time data form twelve data.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:5001/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "http://localhost:5001/logo.png",
+  "contact_email": "legal@example.com",
+  "legal_info_url": "http://example.com/legal"
+}

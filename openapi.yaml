@@ -1,0 +1,831 @@
+openapi: 3.0.1
+info:
+  title: 12data Plugin
+  description: A plugin that provides financial information of symbols.
+  version: 'v1'
+servers:
+  - url: http://localhost:5001
+paths:
+  /profile/{symbol}:
+    get:
+      operationId: getProfile
+      summary: Returns general information about the company
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+            format: date
+        required: true
+        description: Answer to the questions based on the dividends of a symbol
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /dividends/{symbol}:
+    get:
+      operationId: getDividends
+      summary: Returns the amount of dividedns paid out for the last 10+ years
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: range
+        schema:
+            type: string
+            enum: [last, 1m, 3m, 6m, ytd, 1y, 2y, 5y, full]
+            default: last
+        description: Country where instrument is traded
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /splits/{symbol}:
+    get:
+      operationId: getSplits
+      summary: Answer to the questions based on the date and the split factor of shares of the company for the last 10+ years.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: range
+        schema:
+            type: string
+            enum: [last, 1m, 3m, 6m, ytd, 1y, 2y, 5y, full]
+            default: last
+        description: Country where instrument is traded
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /earnings/{symbol}:
+    get:
+      operationId: getEarning
+      summary: Returns earnings data for a given company, including EPS estimate and EPS actual. Earnings are available for complete company history.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: type
+        schema:
+            type: string
+        description: Type to which instrument belongs
+      - in: query
+        name: period
+        schema:
+            type: string
+            enum: [latest, next]
+        description: Type of earning, returns only 1 record 
+      - in: query
+        name: outputsize
+        schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 10
+        description: Type of earning, returns only 1 record 
+      - in: query
+        name: format
+        schema:
+            type: string
+            enum: [JSON, CSV]
+            default: JSON
+        description: Value can be JSON or CSV
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /earnings_calendar:
+    get:
+      operationId: getEarningCalendar
+      summary: Returns earning data as a calendar for a given date range. By default today’s earning is returned.
+      parameters:
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: format
+        schema:
+            type: string
+            enum: [JSON, CSV]
+            default: JSON
+        description: Value can be JSON or CSV
+      - in: query
+        name: delimiter
+        schema:
+            type: string
+            default: ;
+        description: Specify the delimiter used when downloading the csv file
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /ipo_calendar:
+    get:
+      operationId: getIPOCalendar
+      summary: Returns past, today, or upcoming IPOs.
+      parameters:
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /statistics/{symbol}:
+    get:
+      operationId: getStatistics
+      summary: Returns current overview of company's main statistics including valuation metrics and financials.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchage where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded        
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /insider_transactions/{symbol}:
+    get:
+      operationId: getTransactions
+      summary: Returns trading information performed by insiders.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchage where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded        
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /income_statement/{symbol}:
+    get:
+      operationId: getIncome
+      summary: Returns complete income statement of a company and shows the company's revenues and expenses during a period (annual or quarter)
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: period
+        schema:
+            type: string
+            enum: [annual, quaterly]
+        description: Type of earning, returns only 1 record 
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /balance_sheet/{symbol}:
+    get:
+      operationId: getBalance
+      summary: Returns complete balance sheet of a company showing the summary of assets, liabilities, and shareholders' equity.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: period
+        schema:
+            type: string
+            enum: [annual, quaterly]
+        description: Type of earning, returns only 1 record 
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /cash_flow/{symbol}:
+    get:
+      operationId: getCash
+      summary: Returns complete cash flow of a company showing the net amount of cash and cash equivalents being transferred into and out of business.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: period
+        schema:
+            type: string
+            enum: [annual, quaterly]
+        description: Type of earning, returns only 1 record 
+      - in: query
+        name: start_date
+        schema:
+            type: string
+            format: date
+        description: Start date for data retrieval
+      - in: query
+        name: end_date
+        schema:
+            type: string
+        description: End date for data retrieval
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /options/expiration/{symbol}:
+    get:
+      operationId: getOptionsExpiration
+      summary: Returns  the expiration dates of an option contract.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /options/chain/{symbol}:
+    get:
+      operationId: getOptionsChain
+      summary: Returns a listing of all available options contracts for given security. It shows all listed puts, calls, their expiration, strike prices, and pricing information for a single underlying asset within a given maturity period.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      - in: query
+        name: expiration_date
+        schema:
+            type: string
+            format: date
+        description: Expiration date of an option contract
+      - in: query
+        name: option_id
+        schema:
+            type: string
+            format: AAPL220121C00505000
+        description: Contract name of an option
+      - in: query
+        name: side
+        schema:
+            type: string
+            enum: [calls, puts]
+        description: Works only when expiration_date parameter is set
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /key_executives/{symbol}:
+    get:
+      operationId: getKeyExecutives
+      summary: Returns individuals at the highest level of management of an organization.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'                
+  /institutional_holders/{symbol}:
+    get:
+      operationId: getInstitutionalHolders
+      summary: Returns the amount of the company's available stock owned by institutions (pension funds, insurance companies, investment firms, private foundations, endowments, or other large entities that manage funds on behalf of others).
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'                
+  /fund_holders/{symbol}:
+    get:
+      operationId: getFundHolders
+      summary: Returns the  amount of the company's available stock owned by mutual fund holders.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'                
+  /direct_holders/{symbol}:
+    get:
+      operationId: getDirectHolders
+      summary: Returns the amount of the stocks owned directly and recorded in the company's share registry.
+      parameters:
+      - in: path
+        name: symbol
+        schema:
+            type: string
+        required: true
+        description: Symbol ticker of instrument,For preffered stocks use dot(.) delimiter E.g. BRK.A or BRK.B will be correct
+      - in: query
+        name: exchange
+        schema:
+            type: string
+        description: Exchange where instrument is traded
+      - in: query
+        name: mic_code
+        schema:
+            type: string
+        description: Market Identifier Code(MIC) under ISO 10383 standard
+      - in: query
+        name: country
+        schema:
+            type: string
+        description: Country where instrument is traded
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'                
+components:
+  schemas:
+    EarningsResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        earnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Earning'
+        status:
+          type: string
+    Meta:
+      type: object
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        currency:
+          type: string
+        exchange:
+          type: string
+        mic_code:
+          type: string
+        exchange_timezone:
+          type: string
+    Earning:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        eps_estimate:
+          type: number
+          format: float
+        eps_actual:
+          type: number
+          format: float
+        difference:
+          type: number
+          format: float
+        surprise_prc:
+          type: number
+          format: float
+    Response:
+      type: object
+      properties:
+        todos:
+          type: array
+          items:
+            type: string
+          description: The list of todos.
+    SplitResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Split date
+        description:
+          type: string
+          description: Specification of the split event
+        ratio:
+          type: number
+          format: float
+          description: The ratio by which the number of a company's outstanding shares of stock are increased following a stock split
+        from_factor:
+          type: number
+          format: float
+          description: From factor of the split
+        to_factor:
+          type: number
+          format: float
+          description: To factor of the split
+    # addTodoRequest:
+    #   type: object
+    #   required:
+    #   - todo
+    #   properties:
+    #     todo:
+    #       type: string
+    #       description: The todo to add to the list.
+    #       required: true
+    # deleteTodoRequest:
+    #   type: object
+    #   required:
+    #   - todo_idx
+    #   properties:
+    #     todo_idx:
+    #       type: integer
+    #       description: The index of the todo to delete.
+    #       required: true
